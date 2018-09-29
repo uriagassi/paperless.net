@@ -84,7 +84,7 @@ namespace Paperless.Model
         public int NotebookId { get; set; }
         [Required]
         public string Name { get; set; }
-        public List<Note> Notes { get; set; }
+        public ICollection<Note> Notes { get; set; }
     }
 
     public class Tag

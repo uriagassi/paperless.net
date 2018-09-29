@@ -41,7 +41,10 @@ namespace Paperless
             tagView.Nodes["Notebooks"].Nodes.Clear();
             foreach (var notebook in context.Notebooks)
             {
-                tagView.Nodes["Notebooks"].Nodes.Add(notebook.NotebookId.ToString(), notebook.Name, 2).Tag = notebook;
+                var count = (from note in context.Notes
+                                where note.Notebook == notebook
+                                select note).Count();
+                tagView.Nodes["Notebooks"].Nodes.Add(notebook.NotebookId.ToString(), notebook.Name + " (" + count + ")", 2).Tag = notebook;
             }
             tagView.SelectedNode = tagView.Nodes["Notebooks"].Nodes[0];
         }
@@ -122,10 +125,11 @@ namespace Paperless
             context = new Model.NotesContext();
             //context.CreateIfNeeded();
             tags.DataSource = context.Tags.Local.ToBindingList();
-    
-            context.Tags.Local.CollectionChanged += tags_DataSourceChanged();
+                tagView.Nodes["Tags"].Expand();
+                context.Tags.Local.CollectionChanged += tags_DataSourceChanged();
                 UpdateTagList();
                 UpdateNotebookList();
+                tagView.Nodes[0].EnsureVisible();
             }
             catch (Exception e)
             {
