@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Paperless.Model
 {
-    class NotesContext : DbContext
+    public class NotesContext : DbContext
     {
         public DbSet<Notebook> Notebooks { get; set; }
         public DbSet<Tag> Tags { get; set; }

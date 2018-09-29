@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using Paperless.Model;
-using mshtml;
+using Microsoft.EntityFrameworkCore;
 
 namespace Paperless
 {
@@ -123,6 +123,7 @@ namespace Paperless
         {
             try { 
             context = new Model.NotesContext();
+                noteDetails1.Context = context;
             //context.CreateIfNeeded();
             tags.DataSource = context.Tags.Local.ToBindingList();
                 tagView.Nodes["Tags"].Expand();
@@ -270,12 +271,12 @@ namespace Paperless
             {
                 noteBindingSource.DataSource = (from noteTag1 in context.NoteTags
                                                where noteTag1.Tag == e.Node.Tag
-                                               select noteTag1.Note).ToList();
+                                               select noteTag1.Note).Include(n=>n.NoteTags).ToList();
             } else if (e.Node.Tag is Notebook)
             {
-                noteBindingSource.DataSource = (from note in context.Notes
-                                                where note.Notebook == e.Node.Tag
-                                                select note).ToList();
+                noteBindingSource.DataSource = context.Notes.Where(n =>
+                                                n.Notebook == e.Node.Tag).Include(n => n.NoteTags).ToList();
+                                              
             }
             noteBindingSource.ResetBindings(false);
 
@@ -283,7 +284,7 @@ namespace Paperless
 
         private void noteListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            webBrowser1.DocumentText = "0";
+            /*webBrowser1.DocumentText = "0";
             webBrowser1.Document.OpenNew(true);
             if (noteBindingSource.Current != null)
             {
@@ -299,7 +300,8 @@ namespace Paperless
                 webBrowser1.Document.Write(text);
  
             }
-            webBrowser1.Refresh();
+            webBrowser1.Refresh();*/
+            noteDetails1.DataSource = noteBindingSource.Current;
         }
 
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
@@ -322,6 +324,15 @@ namespace Paperless
             // 2. You can add/remove style rules.
             int index = ss.addRule(".attachment", "max-width: 100%; height: auto;");
             //ss.removeRule(index);*/
+        }
+
+        private void noteListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var item = noteListView.IndexFromPoint(e.Location);
+            if (item >= 0)
+            {
+                new NoteDetailsForm(noteListView.Items[item], context).Show();
+            }
         }
     }
 }

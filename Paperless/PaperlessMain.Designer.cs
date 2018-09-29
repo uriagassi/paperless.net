@@ -39,8 +39,7 @@
             this.noteListView = new System.Windows.Forms.ListBox();
             this.noteBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.notes = new Paperless.Notes();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.titleBox = new System.Windows.Forms.TextBox();
+            this.noteDetails1 = new Paperless.NoteDetails();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -173,8 +172,7 @@
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.webBrowser1);
-            this.splitContainer2.Panel2.Controls.Add(this.titleBox);
+            this.splitContainer2.Panel2.Controls.Add(this.noteDetails1);
             this.splitContainer2.Size = new System.Drawing.Size(530, 404);
             this.splitContainer2.SplitterDistance = 176;
             this.splitContainer2.TabIndex = 0;
@@ -191,6 +189,7 @@
             this.noteListView.TabIndex = 0;
             this.noteListView.ValueMember = "Title";
             this.noteListView.SelectedIndexChanged += new System.EventHandler(this.noteListView_SelectedIndexChanged);
+            this.noteListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.noteListView_MouseDoubleClick);
             // 
             // noteBindingSource
             // 
@@ -202,23 +201,16 @@
             this.notes.DataSetName = "Notes";
             this.notes.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
-            // webBrowser1
+            // noteDetails1
             // 
-            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(0, 20);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(350, 384);
-            this.webBrowser1.TabIndex = 1;
-            this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
-            // 
-            // titleBox
-            // 
-            this.titleBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.titleBox.Location = new System.Drawing.Point(0, 0);
-            this.titleBox.Name = "titleBox";
-            this.titleBox.Size = new System.Drawing.Size(350, 20);
-            this.titleBox.TabIndex = 0;
+            this.noteDetails1.Context = null;
+            this.noteDetails1.DataSource = typeof(Paperless.Model.Note);
+            this.noteDetails1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.noteDetails1.Location = new System.Drawing.Point(0, 0);
+            this.noteDetails1.Name = "noteDetails1";
+            this.noteDetails1.Note = null;
+            this.noteDetails1.Size = new System.Drawing.Size(350, 404);
+            this.noteDetails1.TabIndex = 0;
             // 
             // menuStrip1
             // 
@@ -538,7 +530,6 @@
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
-            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.noteBindingSource)).EndInit();
@@ -605,8 +596,7 @@
         private System.Windows.Forms.ListBox noteListView;
         private System.Windows.Forms.BindingSource noteBindingSource;
         private Notes notes;
-        private System.Windows.Forms.TextBox titleBox;
-        private System.Windows.Forms.WebBrowser webBrowser1;
+        private NoteDetails noteDetails1;
     }
 }
 

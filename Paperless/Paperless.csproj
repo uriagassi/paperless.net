@@ -162,6 +162,18 @@
   <ItemGroup>
     <Compile Include="Import\FromEvernote.cs" />
     <Compile Include="Model\Model.cs" />
+    <Compile Include="NoteDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NoteDetails.Designer.cs">
+      <DependentUpon>NoteDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NoteDetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NoteDetailsForm.Designer.cs">
+      <DependentUpon>NoteDetailsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Notes.cs">
       <DependentUpon>Notes.xsd</DependentUpon>
     </Compile>
@@ -185,6 +197,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ExtensionHelper.cs" />
     <Compile Include="WebBrowserHelper.cs" />
+    <EmbeddedResource Include="NoteDetails.resx">
+      <DependentUpon>NoteDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NoteDetailsForm.resx">
+      <DependentUpon>NoteDetailsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PaperlessMain.resx">
       <DependentUpon>PaperlessMain.cs</DependentUpon>
     </EmbeddedResource>
