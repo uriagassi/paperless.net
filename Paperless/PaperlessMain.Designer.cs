@@ -122,6 +122,7 @@
             this.tagView.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.tagView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tagView.ForeColor = System.Drawing.SystemColors.ScrollBar;
+            this.tagView.HideSelection = false;
             this.tagView.ImageIndex = 0;
             this.tagView.ImageList = this.imageList1;
             this.tagView.ItemHeight = 20;
