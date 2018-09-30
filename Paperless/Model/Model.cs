@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SQLite;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,22 +25,50 @@ namespace Paperless.Model
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             System.IO.DirectoryInfo rootDirectory = new System.IO.DirectoryInfo(Properties.Settings.Default.ProjectLocation);
-                if (!rootDirectory.Exists)
-                {
-                    rootDirectory.Create();
-                }
-                System.IO.FileInfo sqlSource = new System.IO.FileInfo(rootDirectory.FullName + @"\paperless.sqlite");
-                if (!sqlSource.Exists)
-                {
-                    newDb = true;
-                    SQLiteConnection.CreateFile(sqlSource.FullName);
-                    //var conn = new SQLiteConnection("Data Source=" + sqlSource.FullName);
+            if (!rootDirectory.Exists)
+            {
+                rootDirectory.Create();
+            }
+            System.IO.FileInfo sqlSource = new System.IO.FileInfo(rootDirectory.FullName + @"\paperless.sqlite");
+            if (!sqlSource.Exists)
+            {
+                CreateProjectDir();
+                newDb = true;
+                SQLiteConnection.CreateFile(sqlSource.FullName);
+                //var conn = new SQLiteConnection("Data Source=" + sqlSource.FullName);
 
-                }
-                optionsBuilder.UseSqlite("Data Source=" + sqlSource.FullName);
+            }
+            optionsBuilder.UseSqlite("Data Source=" + sqlSource.FullName);
 
         }
 
+        public static void CreateProjectDir()
+        {
+            DirectoryInfo imagesDirectory = new DirectoryInfo(Path.Combine(Properties.Settings.Default.ProjectLocation, "images"));
+            imagesDirectory.Create();
+            new DirectoryInfo(Path.Combine(Properties.Settings.Default.ProjectLocation, "js")).Create();
+            new DirectoryInfo(Path.Combine(Properties.Settings.Default.ProjectLocation, "css")).Create();
+
+            using (ZipArchive zip = new ZipArchive(new MemoryStream(PaperlessResources.images)))
+            {
+
+                foreach (var entry in zip.Entries)
+                {
+                    using (var output = File.Create(Path.Combine(imagesDirectory.FullName, entry.FullName)))
+                    {
+                        entry.Open().CopyTo(output);
+                    }
+                }
+            }
+            using (var js = File.CreateText(Path.Combine(Properties.Settings.Default.ProjectLocation, @"js\paperless.js")))
+            {
+                js.Write(PaperlessResources.paperless_js);
+            }
+            using (var css = File.CreateText(Path.Combine(Properties.Settings.Default.ProjectLocation, @"css\paperless.css")))
+            {
+                css.Write(PaperlessResources.paperless_css);
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,9 +94,7 @@ namespace Paperless.Model
             {
                 Database.EnsureCreated();
                 //Database.ExecuteSqlCommand(Database.GenerateCreateScript());
-                var rootNode = Tags.Add(new Tag { Name = "Root" });
-                Tags.Add(new Tag { Name = "Child", ParentTag = rootNode.Entity });
-                SaveChanges();
+                
                 newDb = false;
             }
             if (Notebooks.Count() == 0)

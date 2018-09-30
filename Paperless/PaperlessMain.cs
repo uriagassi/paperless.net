@@ -270,9 +270,10 @@ namespace Paperless
         {
             if (projectFolderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                Properties.Settings.Default.ProjectLocation = projectFolderBrowserDialog1.SelectedPath;
-                LoadProject();
+                toolStripStatusLabel1.Text = Properties.Settings.Default.ProjectLocation 
+                    = projectFolderBrowserDialog1.SelectedPath;
                 Properties.Settings.Default.Save();
+                LoadProject();
             }
         }
 
@@ -291,6 +292,7 @@ namespace Paperless
 
         private void tagView_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if (e.Node == null) return;
             noteBindingSource.SuspendBinding();
 
             if (e.Node.Tag is Model.Tag)
@@ -360,5 +362,7 @@ namespace Paperless
                 new NoteDetailsForm(noteListView.Items[item], context).Show();
             }
         }
+
+        private void updateProjectTemplateToolStripMenuItem_Click(object sender, EventArgs e) => NotesContext.CreateProjectDir();
     }
 }

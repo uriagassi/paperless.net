@@ -71,15 +71,43 @@ namespace Paperless {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .attachment {  max-width: 90%;  height: auto;}
-        ///embed.attachment { min-width:90%; height: 720px;}
-        ///.my-test {
-        /// font-weight: bold;
-        ///}.
+        ///   Looks up a localized string similar to .paperless-attachment {  max-width: 90%;  height: auto;}
+        ///embed.paperless-attachment { min-width:90%; height: 720px;}
+        ///.paperless-attachment-file {
+        ///   height: 70px;
+        ///   width: 250px;
+        ///   border-color: lightblue;
+        ///   color: blue;
+        ///   text-weight: light;
+        ///   border-width: 1px;
+        ///   background: url(&apos;images/&apos;+attr(&apos;data-ext&apos;)+&apos;-icon-48x48.png&apos;);
+        ///   background-repeat: no-repeat;
+        ///   background-position: left;
+        ///   border-style: solid;
+        ///   padding1: 5 5 5 50;
+        ///   text-align: center;
+        ///   text-overflow: ellipsis;
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string paperless_css {
             get {
                 return ResourceManager.GetString("paperless_css", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to window.onload = function(e) {
+        ///	var list = document.getElementsByClassName(&apos;paperless-attachment-file&apos;);
+        ///
+        ///for (var i = 0; i &lt; list.length; i++) {
+        ///  var src = list[i].getAttribute(&apos;data-ext&apos;);
+        ///  list[i].style.backgroundImage=&quot;url(&apos;images/&quot; + src.substring(1) + &quot;-icon-48x48.png&apos;)&quot;;
+        ///}
+        ///}.
+        /// </summary>
+        internal static string paperless_js {
+            get {
+                return ResourceManager.GetString("paperless_js", resourceCulture);
             }
         }
     }

@@ -65,6 +65,7 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importFromEvernoteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeProjectFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateProjectTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -387,7 +388,8 @@
             this.customizeToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.importFromEvernoteToolStripMenuItem,
-            this.changeProjectFolderToolStripMenuItem});
+            this.changeProjectFolderToolStripMenuItem,
+            this.updateProjectTemplateToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -395,28 +397,35 @@
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.customizeToolStripMenuItem.Text = "&Customize";
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // importFromEvernoteToolStripMenuItem
             // 
             this.importFromEvernoteToolStripMenuItem.Name = "importFromEvernoteToolStripMenuItem";
-            this.importFromEvernoteToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.importFromEvernoteToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.importFromEvernoteToolStripMenuItem.Text = "&Import from Evernote...";
             this.importFromEvernoteToolStripMenuItem.Click += new System.EventHandler(this.importFromEvernoteToolStripMenuItem_Click);
             // 
             // changeProjectFolderToolStripMenuItem
             // 
             this.changeProjectFolderToolStripMenuItem.Name = "changeProjectFolderToolStripMenuItem";
-            this.changeProjectFolderToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.changeProjectFolderToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.changeProjectFolderToolStripMenuItem.Text = "&Change Project Folder...";
             this.changeProjectFolderToolStripMenuItem.Click += new System.EventHandler(this.changeProjectFolderToolStripMenuItem_Click);
+            // 
+            // updateProjectTemplateToolStripMenuItem
+            // 
+            this.updateProjectTemplateToolStripMenuItem.Name = "updateProjectTemplateToolStripMenuItem";
+            this.updateProjectTemplateToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.updateProjectTemplateToolStripMenuItem.Text = "&Update Project Template...";
+            this.updateProjectTemplateToolStripMenuItem.Click += new System.EventHandler(this.updateProjectTemplateToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -589,6 +598,7 @@
         private System.Windows.Forms.ListBox noteListView;
         private System.Windows.Forms.BindingSource noteBindingSource;
         private NoteDetails noteDetails1;
+        private System.Windows.Forms.ToolStripMenuItem updateProjectTemplateToolStripMenuItem;
     }
 }
 
