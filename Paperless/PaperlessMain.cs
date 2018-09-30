@@ -15,6 +15,7 @@ namespace Paperless
         {
             WebBrowserHelper.FixBrowserVersion();
             InitializeComponent();
+            LoadProject();
         }
 
         private void tags_DataSourceChanged(object sender, EventArgs e)
@@ -135,10 +136,24 @@ namespace Paperless
 
             }
         }
-
+        protected override void OnClosed(EventArgs e)
+        {
+            Properties.Settings.Default.MainWindowState = WindowState;
+            if (WindowState == FormWindowState.Normal)
+            {
+                Properties.Settings.Default.MainWindowSize = Size;
+            }
+            Properties.Settings.Default.Save();
+            base.OnClosed(e);
+        }
         private void PaperlessMain_Load(object sender, EventArgs e)
         {
-            LoadProject();
+            //LoadProject();
+            WindowState = Properties.Settings.Default.MainWindowState;
+            if (WindowState != FormWindowState.Maximized)
+            {
+                Size = Properties.Settings.Default.MainWindowSize;
+            }
         }
 
         private void LoadProject()
@@ -312,46 +327,7 @@ namespace Paperless
 
         private void noteListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            /*webBrowser1.DocumentText = "0";
-            webBrowser1.Document.OpenNew(true);
-            if (noteBindingSource.Current != null)
-            {
-                var text = (noteBindingSource.Current as Note).NoteData;
-                 text = "<html><head>" +
-                    
-                    "<base href='" + new Uri(Properties.Settings.Default.ProjectLocation + "\\").AbsoluteUri + "'/>" +
-                    "<link rel='stylesheet' type='text/css' href='css/paperless.css'/>" +
-                    "<meta http-equiv='X-UA-Compatible' content='IE=11'>" +
-                    "<script src='js/paperless.js'></script>" +
-                    "</head><body>"
-                     + text + "</body></html>";
-                webBrowser1.Document.Write(text);
- 
-            }
-            webBrowser1.Refresh();*/
             noteDetails1.DataSource = noteBindingSource.Current;
-        }
-
-        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            /*HtmlElement head = webBrowser1.Document.GetElementsByTagName("head")[0];
-            if (head.GetElementsByTagName("base").Count == 0)
-            {
-                HtmlElement baseElement = webBrowser1.Document.CreateElement("base");
-                baseElement.SetAttribute("href", new Uri(Properties.Settings.Default.ProjectLocation).AbsoluteUri);
-                head.AppendChild(baseElement);
-                //webBrowser1.Refresh();
-            }*/
-           /* IHTMLDocument2 doc = (webBrowser1.Document.DomDocument) as IHTMLDocument2;
-            // The first parameter is the url, the second is the index of the added style sheet.
-            IHTMLStyleSheet ss = doc.createStyleSheet("", 0);
-
-            // Now that you have the style sheet you have a few options:
-            // 1. You can just set the content as text.
-            //ss.cssText = @"h1 { color: blue; }";
-            // 2. You can add/remove style rules.
-            int index = ss.addRule(".attachment", "max-width: 100%; height: auto;");
-            //ss.removeRule(index);*/
         }
 
         private void noteListView_MouseDoubleClick(object sender, MouseEventArgs e)

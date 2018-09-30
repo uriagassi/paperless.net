@@ -523,6 +523,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1052, 531);
             this.Controls.Add(this.toolStripContainer1);
+            this.DataBindings.Add(new System.Windows.Forms.Binding("Location", global::Paperless.Properties.Settings.Default, "MainWindowLocation", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.Location = global::Paperless.Properties.Settings.Default.MainWindowLocation;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PaperlessMain";
             this.Text = "Paperless";

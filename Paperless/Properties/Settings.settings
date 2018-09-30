@@ -5,5 +5,14 @@
     <Setting Name="ProjectLocation" Type="System.String" Scope="User">
       <Value Profile="(Default)">Paperless</Value>
     </Setting>
+    <Setting Name="MainWindowLocation" Type="System.Drawing.Point" Scope="User">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="MainWindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
+      <Value Profile="(Default)">Normal</Value>
+    </Setting>
+    <Setting Name="MainWindowSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">1052, 531</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
