@@ -36,8 +36,8 @@
             this.tagView = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.noteBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.noteListView = new System.Windows.Forms.ListBox();
+            this.noteBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.noteDetails1 = new Paperless.NoteDetails();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,6 +98,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -109,8 +110,8 @@
             // 
             this.splitContainer1.Panel2.AutoScroll = true;
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(800, 404);
-            this.splitContainer1.SplitterDistance = 266;
+            this.splitContainer1.Size = new System.Drawing.Size(1052, 485);
+            this.splitContainer1.SplitterDistance = 227;
             this.splitContainer1.TabIndex = 0;
             // 
             // tagView
@@ -139,7 +140,7 @@
             treeNode2});
             this.tagView.SelectedImageIndex = 0;
             this.tagView.ShowLines = false;
-            this.tagView.Size = new System.Drawing.Size(266, 404);
+            this.tagView.Size = new System.Drawing.Size(227, 485);
             this.tagView.TabIndex = 0;
             this.tagView.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tagView_BeforeLabelEdit);
             this.tagView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tagView_AfterLabelEdit);
@@ -161,6 +162,7 @@
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             // 
@@ -171,13 +173,9 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.noteDetails1);
-            this.splitContainer2.Size = new System.Drawing.Size(530, 404);
-            this.splitContainer2.SplitterDistance = 176;
+            this.splitContainer2.Size = new System.Drawing.Size(821, 485);
+            this.splitContainer2.SplitterDistance = 242;
             this.splitContainer2.TabIndex = 0;
-            // 
-            // noteBindingSource
-            // 
-            this.noteBindingSource.DataSource = typeof(Paperless.Model.Note);
             // 
             // noteListView
             // 
@@ -187,11 +185,15 @@
             this.noteListView.FormattingEnabled = true;
             this.noteListView.Location = new System.Drawing.Point(0, 0);
             this.noteListView.Name = "noteListView";
-            this.noteListView.Size = new System.Drawing.Size(176, 404);
+            this.noteListView.Size = new System.Drawing.Size(242, 485);
             this.noteListView.TabIndex = 0;
             this.noteListView.ValueMember = "Title";
             this.noteListView.SelectedIndexChanged += new System.EventHandler(this.noteListView_SelectedIndexChanged);
             this.noteListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.noteListView_MouseDoubleClick);
+            // 
+            // noteBindingSource
+            // 
+            this.noteBindingSource.DataSource = typeof(Paperless.Model.Note);
             // 
             // noteDetails1
             // 
@@ -201,7 +203,7 @@
             this.noteDetails1.Location = new System.Drawing.Point(0, 0);
             this.noteDetails1.Name = "noteDetails1";
             this.noteDetails1.Note = null;
-            this.noteDetails1.Size = new System.Drawing.Size(350, 404);
+            this.noteDetails1.Size = new System.Drawing.Size(575, 485);
             this.noteDetails1.TabIndex = 0;
             // 
             // menuStrip1
@@ -214,7 +216,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1052, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -467,11 +469,11 @@
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.splitContainer1);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(800, 404);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1052, 485);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(800, 450);
+            this.toolStripContainer1.Size = new System.Drawing.Size(1052, 531);
             this.toolStripContainer1.TabIndex = 1;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -486,7 +488,7 @@
             this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 0);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1052, 22);
             this.statusStrip1.TabIndex = 0;
             // 
             // toolStripStatusLabel1
@@ -510,7 +512,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1052, 531);
             this.Controls.Add(this.toolStripContainer1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PaperlessMain";
