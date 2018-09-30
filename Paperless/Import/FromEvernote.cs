@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
@@ -21,63 +22,112 @@ namespace Paperless.Import
         private string fileName;
         private NotesContext context;
         private string attachmentDir;
+        private IProgress<ImportProgress> progress;
+        private CancelEventArgs cancelToken;
 
-        public FromEvernote(string fileName, Model.NotesContext context,string attachmentDir)
+        public FromEvernote(string fileName, Model.NotesContext context,string attachmentDir,
+            IProgress<ImportProgress> progress, CancelEventArgs cancelToken)
         {
             this.fileName = fileName;
             this.context = context;
             this.attachmentDir = attachmentDir;
+            this.progress = progress;
+            this.cancelToken = cancelToken;
         }
 
-        internal void Import()
+        internal bool Import()
         {
-            byte[] bytes = new byte[17];
-            using (System.IO.FileStream fs = new System.IO.FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            try
             {
-                fs.Read(bytes, 0, 16);
-            }
-            string chkStr = System.Text.ASCIIEncoding.ASCII.GetString(bytes);
-            if (chkStr.Contains("SQLite format"))
-            {
-                using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=" + fileName))
+                int imported = 0;
+                byte[] bytes = new byte[17];
+                using (System.IO.FileStream fs = new System.IO.FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    conn.Open();
-                    using (SQLiteCommand tagSelect = conn.CreateCommand())
+                    fs.Read(bytes, 0, 16);
+                }
+                string chkStr = System.Text.ASCIIEncoding.ASCII.GetString(bytes);
+                if (chkStr.Contains("SQLite format"))
+                {
+                    Report(new ImportProgress { Title = "Import Notes" });
+                    using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=" + fileName))
                     {
-                        tagSelect.CommandText = "SELECT uid, parent_uid, name FROM tag_attr";
-                        tagSelect.CommandType = System.Data.CommandType.Text;
-                        SQLiteDataReader r = tagSelect.ExecuteReader();
-                        Dictionary<object, Model.Tag> tags = new Dictionary<object, Tag>();
-                        Dictionary<Tag, object> parents = new Dictionary<Tag, object>();
-                        while (r.Read())
+                        conn.Open();
+                        using (SQLiteCommand tagCount = conn.CreateCommand())
                         {
-
-                            var tag = context.Tags.FirstOrDefault(t => t.Name == (string)r["name"]);
-                            if (tag == null)
-                            {
-                                tag = new Tag { Name = (string)r["name"] };
-                            }
-                            if (r["parent_uid"] != DBNull.Value)
-                            {
-                                parents.Add(tag, r["parent_uid"]);
-                            }
-                            tags.Add(r["uid"], tag);
+                            tagCount.CommandText = "SELECT count(*) from tag_attr";
+                            tagCount.CommandType = System.Data.CommandType.Text;
+                            SQLiteDataReader r = tagCount.ExecuteReader();
+                            r.Read();
+                            Report(new ImportProgress { MaxValue = (int)(long)r[0] });
                         }
-                        foreach (var tag in tags.Values)
+                        using (SQLiteCommand tagSelect = conn.CreateCommand())
                         {
-                            AddTag(tag, tags, parents);
+                            tagSelect.CommandText = "SELECT uid, parent_uid, name FROM tag_attr";
+                            tagSelect.CommandType = System.Data.CommandType.Text;
+                            SQLiteDataReader r = tagSelect.ExecuteReader();
+                            Dictionary<object, Model.Tag> tags = new Dictionary<object, Tag>();
+                            Dictionary<Tag, object> parents = new Dictionary<Tag, object>();
+                            while (r.Read())
+                            {
+
+                                var tag = context.Tags.FirstOrDefault(t => t.Name == (string)r["name"]);
+                                if (tag == null)
+                                {
+                                    tag = new Tag { Name = (string)r["name"] };
+                                }
+                                if (r["parent_uid"] != DBNull.Value)
+                                {
+                                    parents.Add(tag, r["parent_uid"]);
+                                }
+                                tags.Add(r["uid"], tag);
+                                Report(new ImportProgress { Progress = imported++, Text = "Imported " + imported + " notes" });
+                            }
+                            Report(new ImportProgress { Text = "Finishing up..." });
+                            foreach (var tag in tags.Values)
+                            {
+                                AddTag(tag, tags, parents);
+                            }
                         }
                     }
                 }
-            } else
+                else
+                {
+                    ProcessEnex(fileName, progress);
+                }
+                context.SaveChanges();
+                return true;
+            } catch (TaskCanceledException)
             {
-                ProcessEnex(fileName);
+                progress.Report(new ImportProgress { Text = "Cancelled operation" });
+                return false;
             }
-            context.SaveChanges();
         }
 
-        private void ProcessEnex(string fileName)
+        private void Report(ImportProgress importProgress)
         {
+            progress.Report(importProgress);
+            if (cancelToken.Cancel) throw new TaskCanceledException();
+        }
+
+        static string ReadableFileSize(double size, int unit = 0)
+        {
+            string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+
+            while (size >= 1024)
+            {
+                size /= 1024;
+                ++unit;
+            }
+
+            return String.Format("{0:0.0} {1}", size, units[unit]);
+        }
+
+        private void ProcessEnex(string fileName, IProgress<ImportProgress> progress)
+        {
+            int imported = 0;
+            long read = 0;
+            long maxSize = (new FileInfo(fileName).Length * 3) / 4;
+            Report(new ImportProgress { Title = "Importing Notes", MaxValue= (int)(maxSize/1000) });
             Notebook mainNotebook = context.Notebooks.First();
             CultureInfo provider = CultureInfo.InvariantCulture;
             foreach (var note in ReadNotes(fileName))
@@ -139,6 +189,8 @@ namespace Paperless.Import
                                             while ((readBytes = attElement.ReadElementContentAsBase64(buffer, 0, 10240)) > 0)
                                             {
                                                 bin.Write(buffer, 0, readBytes);
+                                                read += readBytes;
+                                                Report(new ImportProgress { Progress = (int)(read / 1000) });
                                             }
                                             bin.Flush();
                                             data = ms.ToArray();
@@ -181,8 +233,10 @@ namespace Paperless.Import
                 }
                 newNote.NoteData = fixAttachments(newNote);
                 newNote.Notebook.Notes.Add(newNote);
+                Report(new ImportProgress { Text = "" + imported++ + " notes imported\n\n" + ReadableFileSize(read) + " / " + ReadableFileSize(maxSize) + " unpacked..." });
 
             }
+            Report(new ImportProgress { Text = "Finishing up..." });
         }
 
         private void AddTag(Note note, string tagName)

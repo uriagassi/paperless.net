@@ -36,9 +36,8 @@
             this.tagView = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.noteListView = new System.Windows.Forms.ListBox();
             this.noteBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.notes = new Paperless.Notes();
+            this.noteListView = new System.Windows.Forms.ListBox();
             this.noteDetails1 = new Paperless.NoteDetails();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,7 +86,6 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.noteBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.notes)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
@@ -177,6 +175,10 @@
             this.splitContainer2.SplitterDistance = 176;
             this.splitContainer2.TabIndex = 0;
             // 
+            // noteBindingSource
+            // 
+            this.noteBindingSource.DataSource = typeof(Paperless.Model.Note);
+            // 
             // noteListView
             // 
             this.noteListView.DataSource = this.noteBindingSource;
@@ -190,16 +192,6 @@
             this.noteListView.ValueMember = "Title";
             this.noteListView.SelectedIndexChanged += new System.EventHandler(this.noteListView_SelectedIndexChanged);
             this.noteListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.noteListView_MouseDoubleClick);
-            // 
-            // noteBindingSource
-            // 
-            this.noteBindingSource.DataMember = "Note";
-            this.noteBindingSource.DataSource = this.notes;
-            // 
-            // notes
-            // 
-            this.notes.DataSetName = "Notes";
-            this.notes.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // noteDetails1
             // 
@@ -533,7 +525,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.noteBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.notes)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);
@@ -595,7 +586,6 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ListBox noteListView;
         private System.Windows.Forms.BindingSource noteBindingSource;
-        private Notes notes;
         private NoteDetails noteDetails1;
     }
 }

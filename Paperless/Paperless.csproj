@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Import\FromEvernote.cs" />
+    <Compile Include="Import\ImportProgress.cs" />
     <Compile Include="Model\Model.cs" />
     <Compile Include="NoteDetails.cs">
       <SubType>UserControl</SubType>
@@ -174,14 +175,6 @@
     <Compile Include="NoteDetailsForm.Designer.cs">
       <DependentUpon>NoteDetailsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Notes.cs">
-      <DependentUpon>Notes.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Notes.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Notes.xsd</DependentUpon>
-    </Compile>
     <Compile Include="PaperlessMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -194,6 +187,12 @@
       <DependentUpon>PaperlessResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressDialog.Designer.cs">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ExtensionHelper.cs" />
     <Compile Include="WebBrowserHelper.cs" />
@@ -210,6 +209,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PaperlessResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="ProgressDialog.resx">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -219,17 +221,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="Notes.xsc">
-      <DependentUpon>Notes.xsd</DependentUpon>
-    </None>
-    <None Include="Notes.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>Notes.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Notes.xss">
-      <DependentUpon>Notes.xsd</DependentUpon>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Paperless.Model.Note.datasource" />
     <None Include="Properties\DataSources\Paperless.Model.Notebook.datasource" />

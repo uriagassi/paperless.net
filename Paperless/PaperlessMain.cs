@@ -36,17 +36,39 @@ namespace Paperless
             }
         }
 
-        private void UpdateNotebookList()
+        private void CreateNotebookList()
         {
             tagView.Nodes["Notebooks"].Nodes.Clear();
+            UpdateNotebookList();
+            tagView.SelectedNode = tagView.Nodes["Notebooks"].Nodes[0];
+        }
+
+        private void UpdateNotebookList()
+        {
+            var nodes = tagView.Nodes["Notebooks"].Nodes;
             foreach (var notebook in context.Notebooks)
             {
                 var count = (from note in context.Notes
-                                where note.Notebook == notebook
-                                select note).Count();
-                tagView.Nodes["Notebooks"].Nodes.Add(notebook.NotebookId.ToString(), notebook.Name + " (" + count + ")", 2).Tag = notebook;
+                             where note.Notebook == notebook
+                             select note).Count();
+                var text = notebook.Name + " (" + count + ")";
+                var node = nodes[notebook.NotebookId.ToString()] ?? nodes.Add(notebook.NotebookId.ToString(), text);
+
+                    node.Text = text;
+                node.Tag = notebook;
+                node.ImageIndex = 2;
+                node.SelectedImageIndex = 2;
             }
-            tagView.SelectedNode = tagView.Nodes["Notebooks"].Nodes[0];
+            if (nodes.Count > context.Notebooks.Count())
+            {
+                for (int i = nodes.Count - 1; i >= 0; i--)
+                {
+                    if (context.Notebooks.Find(nodes[i].Name) == null)
+                    {
+                        nodes.RemoveAt(i);
+                    }
+                }
+            }
         }
 
         private void UpdateTag(TreeNodeCollection nodes, Model.Tag parentTag)
@@ -129,7 +151,7 @@ namespace Paperless
                 tagView.Nodes["Tags"].Expand();
                 context.Tags.Local.CollectionChanged += tags_DataSourceChanged();
                 UpdateTagList();
-                UpdateNotebookList();
+                CreateNotebookList();
                 tagView.Nodes[0].EnsureVisible();
             }
             catch (Exception e)
@@ -234,9 +256,13 @@ namespace Paperless
         {
             if (evernoteImportDialog.ShowDialog() == DialogResult.OK)
             {
-            
-                new Import.FromEvernote(evernoteImportDialog.FileName, context, Properties.Settings.Default.ProjectLocation + @"/attachments/").Import();
+                new ProgressDialog().Start((p, c) =>
+                new Import.FromEvernote(evernoteImportDialog.FileName, context, 
+                Properties.Settings.Default.ProjectLocation + @"/attachments/", p, c).Import(), this);
+                UpdateNotebookList();
                 UpdateTagList();
+                tagView_AfterSelect(this, new TreeViewEventArgs(tagView.SelectedNode));
+                tagView.SelectedNode.EnsureVisible();
             }
         }
 

@@ -36,13 +36,11 @@
             this.tags = new System.Windows.Forms.ListBox();
             this.noteTagsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.notes = new Paperless.Notes();
             this.noteContents = new System.Windows.Forms.WebBrowser();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.noteBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.notebookBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.noteTagsBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.notes)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -80,6 +78,8 @@
             // 
             // tags
             // 
+            this.tags.BackColor = System.Drawing.SystemColors.Control;
+            this.tags.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tags.DataSource = this.noteTagsBindingSource;
             this.tags.DisplayMember = "Tag.Name";
             this.tags.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -89,6 +89,7 @@
             this.tags.Name = "tags";
             this.tags.Size = new System.Drawing.Size(327, 22);
             this.tags.TabIndex = 2;
+            this.tags.TabStop = false;
             // 
             // noteTagsBindingSource
             // 
@@ -106,11 +107,6 @@
             this.dateTimePicker1.Size = new System.Drawing.Size(144, 20);
             this.dateTimePicker1.TabIndex = 3;
             this.dateTimePicker1.Value = new System.DateTime(2018, 9, 29, 0, 0, 0, 0);
-            // 
-            // notes
-            // 
-            this.notes.DataSetName = "Notes";
-            this.notes.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // noteContents
             // 
@@ -151,7 +147,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.noteBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.notebookBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.noteTagsBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.notes)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -167,7 +162,6 @@
         private System.Windows.Forms.BindingSource noteBindingSource;
         private System.Windows.Forms.BindingSource noteTagsBindingSource;
         private System.Windows.Forms.BindingSource notebookBindingSource;
-        private Notes notes;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }
