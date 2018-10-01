@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Notebooks", 1, 1);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Tags");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Notebooks", 1, 1);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Tags");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PaperlessMain));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tagView = new System.Windows.Forms.TreeView();
@@ -128,17 +128,17 @@
             this.tagView.LabelEdit = true;
             this.tagView.Location = new System.Drawing.Point(0, 0);
             this.tagView.Name = "tagView";
-            treeNode1.ImageIndex = 1;
-            treeNode1.Name = "Notebooks";
-            treeNode1.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode1.SelectedImageIndex = 1;
-            treeNode1.Text = "Notebooks";
-            treeNode2.Name = "Tags";
-            treeNode2.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode2.Text = "Tags";
+            treeNode3.ImageIndex = 1;
+            treeNode3.Name = "Notebooks";
+            treeNode3.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode3.SelectedImageIndex = 1;
+            treeNode3.Text = "Notebooks";
+            treeNode4.Name = "Tags";
+            treeNode4.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode4.Text = "Tags";
             this.tagView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2});
+            treeNode3,
+            treeNode4});
             this.tagView.SelectedImageIndex = 0;
             this.tagView.ShowLines = false;
             this.tagView.Size = new System.Drawing.Size(227, 485);
@@ -529,6 +529,7 @@
             this.ClientSize = new System.Drawing.Size(1052, 531);
             this.Controls.Add(this.toolStripContainer1);
             this.DataBindings.Add(new System.Windows.Forms.Binding("Location", global::Paperless.Properties.Settings.Default, "MainWindowLocation", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = global::Paperless.Properties.Settings.Default.MainWindowLocation;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PaperlessMain";
