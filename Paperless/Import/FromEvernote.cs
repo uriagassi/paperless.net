@@ -109,18 +109,7 @@ namespace Paperless.Import
             if (cancelToken.Cancel) throw new TaskCanceledException();
         }
 
-        static string ReadableFileSize(double size, int unit = 0)
-        {
-            string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
-
-            while (size >= 1024)
-            {
-                size /= 1024;
-                ++unit;
-            }
-
-            return String.Format("{0:0.0} {1}", size, units[unit]);
-        }
+        
 
         private void ProcessEnex(string fileName, IProgress<ImportProgress> progress)
         {
@@ -175,7 +164,8 @@ namespace Paperless.Import
                                         if (att.FileName == null)
                                         {
                                             att.FileName = attElement.ReadElementContentAsString().Split('/').Last().Split('\\').Last();
-                                        } else
+                                        }
+                                        else
                                         {
                                             attElement.Read();
                                         }
@@ -184,7 +174,7 @@ namespace Paperless.Import
                                         byte[] buffer = new byte[10240];
                                         int readBytes = 0;
                                         using (MemoryStream ms = new MemoryStream())
-                                            using (BinaryWriter bin = new BinaryWriter(ms))
+                                        using (BinaryWriter bin = new BinaryWriter(ms))
                                         {
                                             while ((readBytes = attElement.ReadElementContentAsBase64(buffer, 0, 10240)) > 0)
                                             {
@@ -203,24 +193,7 @@ namespace Paperless.Import
                             }
                             if (att.FileName == null)
                                 att.FileName = newNote.Title + ExtensionHelper.GetExtension(att.Mime, "");
-                            att.FileName = Regex.Replace(att.FileName, @"[\/:"" *?<>|&=;]+", "_");
-                            if (String.IsNullOrEmpty(Path.GetExtension(att.FileName))) {
-                                att.FileName += ExtensionHelper.GetExtension(att.Mime, "");
-                            }
-                            if (att.FileName.Length > 55)
-                            {
-                                att.FileName = Path.GetFileNameWithoutExtension(att.FileName).Substring(0, 50) + new string(Path.GetExtension(att.FileName).Take(5).ToArray());
-                            }
-                            var fileInfo = new FileInfo(attachmentDir + att.FileName);
-
-
-                            att.UniqueFileName = fileInfo.Exists ?
-                                Path.GetFileNameWithoutExtension(att.FileName) + Environment.TickCount + "." + fileInfo.Extension : att.FileName;
-                            Directory.CreateDirectory(attachmentDir);
-                            File.WriteAllBytes(attachmentDir + att.UniqueFileName, data);
-                            MD5 md5 = MD5.Create();
-                            byte[] hash = md5.ComputeHash(data);
-                            att.Hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
+                            att.SetAttachmentFile(attachmentDir, data);
                             context.Attachments.Add(att);
                             newNote.Attachments.Add(att);
                             break;
@@ -233,7 +206,7 @@ namespace Paperless.Import
                 }
                 newNote.NoteData = fixAttachments(newNote);
                 newNote.Notebook.Notes.Add(newNote);
-                Report(new ImportProgress { Text = "" + imported++ + " notes imported\n\n" + ReadableFileSize(read) + " / " + ReadableFileSize(maxSize) + " unpacked..." });
+                Report(new ImportProgress { Text = "" + imported++ + " notes imported\n\n" + read.ReadableFileSize() + " / " + maxSize.ReadableFileSize() + " unpacked..." });
 
             }
             Report(new ImportProgress { Text = "Finishing up..." });
@@ -263,19 +236,7 @@ namespace Paperless.Import
                     AddTag(note, "__Corrupt__");
                     return match.Groups[0].Value;
                 }
-                if (att.Mime.StartsWith("image"))
-                {
-                    return "<img class='paperless-attachment' src='attachments/" + att.UniqueFileName + "' hash='" + att.Hash + "'/>";
-                }
-                else if (att.Mime.EndsWith("pdf"))
-                {
-                    return "<embed class='paperless-attachment' src='attachments/" + att.UniqueFileName + "' type='" + att.Mime + "' hash='" + att.Hash + "'/>";
-                } else
-                {
-                    return "<div class='paperless-attachment-file' data-ext='"+ ExtensionHelper.GetExtension(att.Mime, att.FileName) +"'" +
-                    " data-src='attachments/" + att.UniqueFileName + "'><span>&nbsp;</span><span>" + att.FileName + "</span>\n" +
-"<span>13.0 KB </span></div>";
-                }
+                return att.GetHTMLTag();
             });
         }
 

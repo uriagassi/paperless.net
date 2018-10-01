@@ -5,10 +5,10 @@ using System.Data.SQLite;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using Paperless.Utils;
 
 namespace Paperless.Model
 {
@@ -142,6 +142,47 @@ namespace Paperless.Model
         public String UniqueFileName { get; set; }
         public String Mime { get; set; }
         public String Hash { get; set; }
+        public long Size { get; set; }
+
+        internal string GetHTMLTag()
+        {
+            if (Mime.StartsWith("image"))
+            {
+                return "<img class='paperless-attachment' src='attachments/" + UniqueFileName + "' hash='" + Hash + "'/>";
+            }
+            else if (Mime.EndsWith("pdf"))
+            {
+                return "<embed class='paperless-attachment' src='attachments/" + UniqueFileName + "' type='" + Mime + "' hash='" + Hash + "'/>";
+            }
+            else
+            {
+                return "<div class='paperless-attachment-file' data-ext='" + ExtensionHelper.GetExtension(Mime, FileName) + "'" +
+                " data-src='attachments/" + UniqueFileName + "'><span>&nbsp;</span><span>" + FileName + "</span>\n" +
+"<span>" + Size.ReadableFileSize() + " </span></div>";
+            }
+        }
+
+        public void SetAttachmentFile(string attachmentDir, byte[] data)
+        {
+            FileName = Regex.Replace(FileName, @"[\/:"" *?<>|&=;]+", "_");
+            if (string.IsNullOrEmpty(Path.GetExtension(FileName)))
+            {
+                FileName += ExtensionHelper.GetExtension(Mime, "");
+            }
+            if (FileName.Length > 55)
+            {
+                FileName = Path.GetFileNameWithoutExtension(FileName).Substring(0, 50) + new string(Path.GetExtension(FileName).Take(5).ToArray());
+            }
+            var fileInfo = new FileInfo(attachmentDir + FileName);
+            UniqueFileName = fileInfo.Exists ?
+                Path.GetFileNameWithoutExtension(FileName) + Environment.TickCount + "." + fileInfo.Extension : FileName;
+            Directory.CreateDirectory(attachmentDir);
+            Size = data.Length;
+            File.WriteAllBytes(attachmentDir + UniqueFileName, data);
+            MD5 md5 = MD5.Create();
+            byte[] hash = md5.ComputeHash(data);
+            Hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
+        }
     }
 
     public class Note
