@@ -310,17 +310,22 @@ namespace Paperless
         {
             if (e.Node == null) return;
             noteBindingSource.SuspendBinding();
-
-            if (e.Node.Tag is Model.Tag)
+            IQueryable<Note> query = null;
+            if (e.Node.Tag is Tag)
             {
-                noteBindingSource.DataSource = (from noteTag1 in context.NoteTags
-                                               where noteTag1.Tag == e.Node.Tag
-                                               select noteTag1.Note).Include("NoteTags.Tag").Include("Attachments").ToList();
+                query = (from noteTag1 in context.NoteTags
+                         where noteTag1.Tag == e.Node.Tag
+                         select noteTag1.Note);
             } else if (e.Node.Tag is Notebook)
             {
-                noteBindingSource.DataSource = context.Notes.Where(n =>
-                                                n.Notebook == e.Node.Tag).Include("NoteTags.Tag").Include("Attachments").ToList();
+                query = context.Notes.Where(n =>
+                                                n.Notebook == e.Node.Tag);
                                               
+            }
+            if (query != null)
+            {
+                noteBindingSource.DataSource = query.OrderByDescending(n => n.CreateTime).Include("NoteTags.Tag").Include("Attachments").ToList();
+                noteBindingSource.Position = 0;
             }
             noteBindingSource.ResetBindings(false);
 
