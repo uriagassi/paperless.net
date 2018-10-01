@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Paperless.Model;
 
@@ -65,6 +66,7 @@ namespace Paperless
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            noteContents.ObjectForScripting = new ScriptInterface();
         }
 
         // create an event for the value change
@@ -80,11 +82,35 @@ namespace Paperless
             NoteChanged?.Invoke(this, e);
         }
 
+        [System.Runtime.InteropServices.ComVisibleAttribute(true)]
+        public class ScriptInterface
+        {
+            public void debugPrint(object obj)
+            {
+                MessageBox.Show("" + obj);
+            }
+            public void openAttachment(string att)
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo()
+                {
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    FileName = Properties.Settings.Default.ProjectLocation + '\\' + att,
+                    //Verb = "openas",
+                    UseShellExecute = true,
+                    ErrorDialog = true
+                };
+
+                Process.Start(startInfo);
+
+            }
+        }
+
         private void loadNoteContents()
         {
             if (String.IsNullOrEmpty(noteContents.DocumentText) || noteContents.StatusText == "Done")
             {
                 noteContents.DocumentText = "0";
+            }
                 noteContents.Document.OpenNew(false);
                 if (noteBindingSource.Current != null)
                 {
@@ -101,7 +127,7 @@ namespace Paperless
 
                 }
                 noteContents.Refresh();
-            }
+            
         }
 
         private void noteBindingSource_CurrentChanged(object sender, EventArgs e)

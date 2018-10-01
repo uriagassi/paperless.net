@@ -5,13 +5,11 @@ embed.paperless-attachment { min-width:90%; height: 720px;}
    width: 250px;
    border-color: lightblue;
    color: blue;
-   text-weight: light;
+   font-weight: lighter;
    border-width: 1px;
-   background: url('images/'+attr('data-ext')+'-icon-48x48.png');
    background-repeat: no-repeat;
    background-position: left;
    border-style: solid;
-   padding1: 5 5 5 50;
    text-align: center;
    text-overflow: ellipsis;
    white-space: nowrap;
