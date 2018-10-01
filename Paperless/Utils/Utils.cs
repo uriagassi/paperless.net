@@ -10,11 +10,12 @@ namespace Paperless.Utils
     {
         public static string ReadableFileSize(this long size, int unit = 0)
         {
+            var sizeF = (float)size;
             string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
-            while (size >= 1024)
+            while (sizeF >= 1024)
             {
-                size /= 1024;
+                sizeF /= 1024;
                 ++unit;
             }
 

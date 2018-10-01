@@ -233,7 +233,7 @@ namespace Paperless.Import
                 Attachment att = note.Attachments.Find(x => x.Hash == match.Groups[1].Value.ToLower());
                 if (att == null)
                 {
-                    AddTag(note, "__Corrupt__");
+                    AddTag(note, ".__Corrupt__");
                     return match.Groups[0].Value;
                 }
                 return att.GetHTMLTag();

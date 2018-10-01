@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using Paperless.Model;
 
@@ -107,6 +108,8 @@ namespace Paperless
 
         private void loadNoteContents()
         {
+            noteContents.Stop();
+            noteContents.ScriptErrorsSuppressed = true;
             if (String.IsNullOrEmpty(noteContents.DocumentText) || noteContents.StatusText == "Done")
             {
                 noteContents.DocumentText = "0";
@@ -127,12 +130,22 @@ namespace Paperless
 
                 }
                 noteContents.Refresh();
-            
+            noteContents.ScriptErrorsSuppressed = false;
         }
 
         private void noteBindingSource_CurrentChanged(object sender, EventArgs e)
         {
             loadNoteContents();
+        }
+
+        private void tags_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+            var tag = (Tag)tags.Items[e.Index];
+            var textSize = TextRenderer.MeasureText(e.Graphics, tag.Name, Font);
+            var rect = new Rectangle(e.Bounds.Location, new Size(textSize.Width + 15, e.Bounds.Height));
+            e.Graphics.FillRectangle(Brushes.LightBlue, rect);
+            TextRenderer.DrawText(e.Graphics, tag.Name, Font, rect, ForeColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
         }
     }
 

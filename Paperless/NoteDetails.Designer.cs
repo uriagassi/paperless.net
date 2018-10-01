@@ -83,13 +83,16 @@
             this.tags.DataSource = this.noteTagsBindingSource;
             this.tags.DisplayMember = "Tag.Name";
             this.tags.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tags.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.tags.FormattingEnabled = true;
+            this.tags.ItemHeight = 20;
             this.tags.Location = new System.Drawing.Point(153, 30);
             this.tags.MultiColumn = true;
             this.tags.Name = "tags";
             this.tags.Size = new System.Drawing.Size(327, 22);
             this.tags.TabIndex = 2;
             this.tags.TabStop = false;
+            this.tags.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tags_DrawItem);
             // 
             // noteTagsBindingSource
             // 
