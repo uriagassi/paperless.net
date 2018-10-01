@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Collections.Specialized;
 using Paperless.Model;
 using Microsoft.EntityFrameworkCore;
+using Paperless.Utils;
 
 namespace Paperless
 {
@@ -314,11 +315,11 @@ namespace Paperless
             {
                 noteBindingSource.DataSource = (from noteTag1 in context.NoteTags
                                                where noteTag1.Tag == e.Node.Tag
-                                               select noteTag1.Note).Include(n=>n.NoteTags).ToList();
+                                               select noteTag1.Note).Include("NoteTags.Tag").Include("Attachments").ToList();
             } else if (e.Node.Tag is Notebook)
             {
                 noteBindingSource.DataSource = context.Notes.Where(n =>
-                                                n.Notebook == e.Node.Tag).Include(n => n.NoteTags).ToList();
+                                                n.Notebook == e.Node.Tag).Include("NoteTags.Tag").Include("Attachments").ToList();
                                               
             }
             noteBindingSource.ResetBindings(false);
@@ -340,5 +341,83 @@ namespace Paperless
         }
 
         private void updateProjectTemplateToolStripMenuItem_Click(object sender, EventArgs e) => NotesContext.CreateProjectDir();
+
+        private void noteListView_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+            // Get the ListBox and the item.
+            ListBox lst = sender as ListBox;
+            var note = ((Note)lst.Items[e.Index]);
+            string titleText = note.Title;
+            var tagText = "";
+            if (note.NoteTags != null)
+            {
+                tagText = string.Join(", ", note.NoteTags.Select(nt => nt.Tag.Name));
+            }
+            var sizeText = "";
+            var attachmentText = "";
+
+            if (note.Attachments != null)
+            {
+                if (note.Attachments.Count == 1)
+                {
+                    attachmentText = note.Attachments[0].FileName;
+                    sizeText = note.Attachments[0].Size.ReadableFileSize();
+                }
+                if (note.Attachments.Count > 1)
+                {
+                    attachmentText = "" + note.Attachments.Count + " attachments";
+                    sizeText = note.Attachments.Sum(a => a.Size).ReadableFileSize();
+                }
+            }
+
+            // Draw the background.
+            e.DrawBackground();
+            var clientBounds = new Rectangle(e.Bounds.Location, e.Bounds.Size);
+            clientBounds.Inflate(-2, -2);
+            using (var titleFont = new Font(this.Font, FontStyle.Bold))
+            {
+
+                // See if the item is selected.
+                if ((e.State & DrawItemState.Selected) ==
+                    DrawItemState.Selected)
+                {
+                    
+                    e.Graphics.FillRectangle(SystemBrushes.Menu, clientBounds);
+                }
+                clientBounds.Inflate(-3, 0);
+                var sf = TextFormatFlags.EndEllipsis;
+                
+                var titleSize = e.Graphics.MeasureString(titleText, titleFont);
+                using (SolidBrush br = new SolidBrush(lst.ForeColor))
+                {
+                    TextRenderer.DrawText(e.Graphics, titleText, titleFont,
+                        new Rectangle(clientBounds.Left, clientBounds.Top + 5, clientBounds.Width, (int)titleSize.Height*2),
+                        lst.ForeColor, sf);
+                }
+
+                TextRenderer.DrawText(e.Graphics, tagText, Font, 
+                    new Rectangle(clientBounds.Left, clientBounds.Top + 3 + (int)titleSize.Height*2, clientBounds.Width, (int)titleSize.Height),
+                    SystemColors.GrayText, sf);
+                if (!string.IsNullOrEmpty(attachmentText))
+                {
+                    var sizeSize = e.Graphics.MeasureString(sizeText, Font);
+                    TextRenderer.DrawText(e.Graphics, sizeText, Font, 
+                        new Point(clientBounds.Right - (int)sizeSize.Width, clientBounds.Bottom - 36), Color.Gray);
+                    TextRenderer.DrawText(e.Graphics, attachmentText, Font,
+                        new Rectangle(clientBounds.Left, clientBounds.Bottom - 35, clientBounds.Width - (int)sizeSize.Width - 2, (int)sizeSize.Height),
+                        Color.Gray, sf);
+                }
+                e.Graphics.DrawString(note.CreateTime.ToShortDateString(), Font, Brushes.Gray, clientBounds.Left, clientBounds.Bottom - 18);
+                e.Graphics.DrawLine(Pens.LightBlue, clientBounds.Left - 2, clientBounds.Bottom - 1, clientBounds.Right + 2, clientBounds.Bottom - 1);
+                // Draw the focus rectangle if appropriate.
+                e.DrawFocusRectangle();
+            }
+        }
+
+        private void noteListView_Resize(object sender, EventArgs e)
+        {
+            noteListView.Invalidate();
+        }
     }
 }

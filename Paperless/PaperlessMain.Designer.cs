@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Notebooks", 1, 1);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Tags");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Notebooks", 1, 1);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Tags");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PaperlessMain));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tagView = new System.Windows.Forms.TreeView();
@@ -128,17 +128,17 @@
             this.tagView.LabelEdit = true;
             this.tagView.Location = new System.Drawing.Point(0, 0);
             this.tagView.Name = "tagView";
-            treeNode1.ImageIndex = 1;
-            treeNode1.Name = "Notebooks";
-            treeNode1.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode1.SelectedImageIndex = 1;
-            treeNode1.Text = "Notebooks";
-            treeNode2.Name = "Tags";
-            treeNode2.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode2.Text = "Tags";
+            treeNode3.ImageIndex = 1;
+            treeNode3.Name = "Notebooks";
+            treeNode3.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode3.SelectedImageIndex = 1;
+            treeNode3.Text = "Notebooks";
+            treeNode4.Name = "Tags";
+            treeNode4.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode4.Text = "Tags";
             this.tagView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2});
+            treeNode3,
+            treeNode4});
             this.tagView.SelectedImageIndex = 0;
             this.tagView.ShowLines = false;
             this.tagView.Size = new System.Drawing.Size(227, 485);
@@ -180,17 +180,22 @@
             // 
             // noteListView
             // 
+            this.noteListView.BackColor = System.Drawing.SystemColors.MenuBar;
             this.noteListView.DataSource = this.noteBindingSource;
             this.noteListView.DisplayMember = "Title";
             this.noteListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.noteListView.FormattingEnabled = true;
+            this.noteListView.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.noteListView.IntegralHeight = false;
+            this.noteListView.ItemHeight = 100;
             this.noteListView.Location = new System.Drawing.Point(0, 0);
             this.noteListView.Name = "noteListView";
             this.noteListView.Size = new System.Drawing.Size(242, 485);
             this.noteListView.TabIndex = 0;
             this.noteListView.ValueMember = "Title";
+            this.noteListView.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.noteListView_DrawItem);
             this.noteListView.SelectedIndexChanged += new System.EventHandler(this.noteListView_SelectedIndexChanged);
             this.noteListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.noteListView_MouseDoubleClick);
+            this.noteListView.Resize += new System.EventHandler(this.noteListView_Resize);
             // 
             // noteBindingSource
             // 
