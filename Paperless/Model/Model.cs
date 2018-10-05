@@ -103,7 +103,24 @@ namespace Paperless.Model
                 SaveChanges();
             }
         }
+        public override int SaveChanges()
+        {
+            var objectStateEntries = ChangeTracker.Entries()
+                .Where(e => e.Entity is Note && (e.State == EntityState.Modified || e.State == EntityState.Added)).ToList();
+            var currentTime = DateTime.UtcNow;
+            foreach (var entry in objectStateEntries)
+            {
+                var entityBase = entry.Entity as Note;
+                if (entityBase == null) continue;
+                if (entry.State == EntityState.Added)
+                {
+                    entityBase.CreateTime = currentTime;
+                }
+                entityBase.UpdateTime = currentTime;
+            }
 
+            return base.SaveChanges();
+        }
     }
 
     public class Notebook

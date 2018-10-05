@@ -424,5 +424,14 @@ namespace Paperless
         {
             noteListView.Invalidate();
         }
+
+        private void tagView_DrawNode(object sender, DrawTreeNodeEventArgs e)
+        {
+            if (e.Node.Tag is string)
+            {
+                TextRenderer.DrawText(e.Graphics, e.Node.Text, tagView.Font, e.Bounds.Location, e.Node.ForeColor);
+            }
+            else e.DrawDefault = true;
+        }
     }
 }

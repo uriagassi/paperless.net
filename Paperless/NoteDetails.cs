@@ -40,6 +40,7 @@ namespace Paperless
             {
                 if (noteBindingSource.DataSource != value && value != null)
                 {
+                    if (Note != null) Context.SaveChanges();
                     //try
                     //{
                         noteBindingSource.DataSource = value;

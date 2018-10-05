@@ -19,7 +19,7 @@ namespace Paperless.Utils
                 ++unit;
             }
 
-            return String.Format("{0:0.0} {1}", size, units[unit]);
+            return String.Format("{0:0.0} {1}", sizeF, units[unit]);
         }
     }
 }

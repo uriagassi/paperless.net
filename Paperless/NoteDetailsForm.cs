@@ -25,5 +25,11 @@ namespace Paperless
             noteDetails1.Context = context;
             noteDetails1.DataSource = dataSource;
         }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            noteDetails1.Context.SaveChanges();
+            base.OnClosing(e);
+        }
     }
 }

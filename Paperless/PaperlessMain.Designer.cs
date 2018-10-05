@@ -120,6 +120,7 @@
             this.tagView.AllowDrop = true;
             this.tagView.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.tagView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tagView.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawText;
             this.tagView.ForeColor = System.Drawing.SystemColors.ScrollBar;
             this.tagView.HideSelection = false;
             this.tagView.ImageIndex = 0;
@@ -147,6 +148,7 @@
             this.tagView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tagView_AfterLabelEdit);
             this.tagView.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.tagView_AfterCollapse);
             this.tagView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tagView_BeforeExpand);
+            this.tagView.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.tagView_DrawNode);
             this.tagView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tagView_ItemDrag);
             this.tagView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tagView_AfterSelect);
             this.tagView.DragDrop += new System.Windows.Forms.DragEventHandler(this.tagView_DragDrop);
