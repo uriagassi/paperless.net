@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using Paperless.Model;
 using Microsoft.EntityFrameworkCore;
 using Paperless.Utils;
+using System.Collections;
 
 namespace Paperless
 {
@@ -28,12 +29,14 @@ namespace Paperless
         private void UpdateTagList()
         {
             context.CreateIfNeeded();
+            tagView.BeginUpdate();
             tagView.SuspendLayout();
             try
             {
                 UpdateTag(tagView.Nodes["Tags"].Nodes, null);
             } finally
             {
+                tagView.EndUpdate();
                 tagView.ResumeLayout();
             }
         }
@@ -102,7 +105,7 @@ namespace Paperless
                     for (int i = 0; i <children.Count(); i++)
                     {
                         var childNode = (from TreeNode cNode in nodes
-                                         where cNode.Tag == children[i]
+                                         where cNode.Tag == children[i].Tag
                                          select cNode).FirstOrDefault();
                         if (childNode == null)
                         {
@@ -160,7 +163,7 @@ namespace Paperless
         private void LoadProject()
         {
             try { 
-            context = new Model.NotesContext();
+            context = new Model.NotesContext(Properties.Settings.Default.ProjectLocation);
                 noteDetails1.Context = context;
             //context.CreateIfNeeded();
             tags.DataSource = context.Tags.Local.ToBindingList();
@@ -184,7 +187,7 @@ namespace Paperless
             return null;
         }
 
-        private Paperless.Model.NotesContext context;
+        private NotesContext context;
 
         private void tagView_DragDrop(object sender, DragEventArgs e)
         {
@@ -209,7 +212,7 @@ namespace Paperless
 
                     }
                 }
-                context.SaveChanges();
+                context.SaveChangesAsync();
                 UpdateTagList();
             }
         }
@@ -236,7 +239,7 @@ namespace Paperless
             if (e.Node.Tag is Model.Tag)
             {
                 ((Model.Tag)e.Node.Tag).IsExpanded = true;
-                context.SaveChanges();
+                context.SaveChangesAsync();
                 UpdateTag(e.Node.Nodes, (Model.Tag)e.Node.Tag);
             }
         }
@@ -246,18 +249,18 @@ namespace Paperless
             if (e.Node.Tag is Model.Tag)
             {
                 ((Model.Tag)e.Node.Tag).IsExpanded = false;
-                context.SaveChanges();
+                context.SaveChangesAsync();
             }
         }
 
         private void tagView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (e.Node.Tag is Model.Tag)
+            if (e.Node.Tag is Model.Tag && e.Label != null)
             {
                 try
                 {
                     ((Model.Tag)e.Node.Tag).Name = e.Label;
-                    context.SaveChanges();
+                    context.SaveChangesAsync();
                 }
                 catch (Exception)
                 {
@@ -308,19 +311,27 @@ namespace Paperless
 
         private void tagView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node == null) return;
+            UpdateNoteView(e.Node);
+
+        }
+
+        private void UpdateNoteView(TreeNode node)
+        {
+            if (node == null) return;
             noteBindingSource.SuspendBinding();
             IQueryable<Note> query = null;
-            if (e.Node.Tag is Tag)
+            if (node.Tag is Tag)
             {
                 query = (from noteTag1 in context.NoteTags
-                         where noteTag1.Tag == e.Node.Tag
+                         where noteTag1.Tag == node.Tag
+                         && noteTag1.Note.Notebook != context.Deleted
                          select noteTag1.Note);
-            } else if (e.Node.Tag is Notebook)
+            }
+            else if (node.Tag is Notebook)
             {
                 query = context.Notes.Where(n =>
-                                                n.Notebook == e.Node.Tag);
-                                              
+                                                n.Notebook == node.Tag);
+
             }
             if (query != null)
             {
@@ -328,7 +339,6 @@ namespace Paperless
                 noteBindingSource.Position = 0;
             }
             noteBindingSource.ResetBindings(false);
-
         }
 
         private void noteListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -345,7 +355,7 @@ namespace Paperless
             }
         }
 
-        private void updateProjectTemplateToolStripMenuItem_Click(object sender, EventArgs e) => NotesContext.CreateProjectDir();
+        private void updateProjectTemplateToolStripMenuItem_Click(object sender, EventArgs e) => context.CreateProjectDir();
 
         private void noteListView_DrawItem(object sender, DrawItemEventArgs e)
         {
@@ -432,6 +442,72 @@ namespace Paperless
                 TextRenderer.DrawText(e.Graphics, e.Node.Text, tagView.Font, e.Bounds.Location, e.Node.ForeColor);
             }
             else e.DrawDefault = true;
+        }
+
+
+        private void noteListView_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                bool? shouldPermenantlyDelete = null;
+                foreach (var idx in noteListView.SelectedIndices)
+                {
+                    var note = noteListView.Items[(int)idx] as Note;
+                    if (note.Notebook.Name == "Deleted")
+                    {
+                        if (shouldPermenantlyDelete == null)
+                        {
+                            shouldPermenantlyDelete = MessageBox.Show(this,
+                                "Items would be permenantly deleted - this is not undoable\n Are you sure?", "Permenantly Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+                            if (!shouldPermenantlyDelete ?? false)
+                            {
+                                continue;
+                            }
+                      
+                        }
+                    }
+                    context.DeleteNote(note);
+                    ((IList)noteListView.DataSource).Remove(note);
+                }
+                context.SaveChangesAsync();
+                UpdateTagList();
+                UpdateNotebookList();
+            
+                //UpdateNoteView(tagView.SelectedNode);
+
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void emptyDeletedNotesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(this,
+                                "Items would be permenantly deleted - this is not undoable\n Are you sure?", "Permenantly Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes
+            ) {
+                foreach(var note in from note in context.Notes where note.Notebook == context.Deleted select note)
+                {
+                    context.Notes.Remove(note);
+                }
+            }
+            context.SaveChangesAsync();
+            UpdateTagList();
+            UpdateNotebookList();
+        }
+
+        private void restoireAllDeletedNotesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var notebook = context.Notebooks.First();
+            foreach (var note in from note in context.Notes where note.Notebook == context.Deleted select note)
+            {
+                note.Notebook = notebook;
+            }
+            context.SaveChangesAsync();
+            UpdateNotebookList();
+            UpdateTagList();
         }
     }
 }

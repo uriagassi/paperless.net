@@ -14,17 +14,42 @@ namespace Paperless.Model
 {
     public class NotesContext : DbContext
     {
+        public NotesContext(string projectLocation)
+        {
+            //super();
+            this.projectLocation = projectLocation;
+        }
         public DbSet<Notebook> Notebooks { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<NoteTag> NoteTags { get; set; }
         public DbSet<Attachment>  Attachments { get; set; }
+        public Notebook Deleted {
+            get
+            {
+                if (_deleted == null)
+                {
+                    _deleted = (from n in Notebooks
+                                where n.Name == "Deleted"
+                                select n).FirstOrDefault();
+                    if (_deleted == null)
+                    {
+                        _deleted = new Notebook { Name = "Deleted" };
+                        Notebooks.Add(_deleted);
+                        SaveChangesAsync();
+                    }
+                }
+                return _deleted;
+            }
+        }
 
         private bool newDb = false;
+        private string projectLocation;
+        private Notebook _deleted;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            System.IO.DirectoryInfo rootDirectory = new System.IO.DirectoryInfo(Properties.Settings.Default.ProjectLocation);
+            System.IO.DirectoryInfo rootDirectory = new System.IO.DirectoryInfo(projectLocation);
             if (!rootDirectory.Exists)
             {
                 rootDirectory.Create();
@@ -42,12 +67,12 @@ namespace Paperless.Model
 
         }
 
-        public static void CreateProjectDir()
+        public void CreateProjectDir()
         {
-            DirectoryInfo imagesDirectory = new DirectoryInfo(Path.Combine(Properties.Settings.Default.ProjectLocation, "images"));
+            DirectoryInfo imagesDirectory = new DirectoryInfo(Path.Combine(projectLocation, "images"));
             imagesDirectory.Create();
-            new DirectoryInfo(Path.Combine(Properties.Settings.Default.ProjectLocation, "js")).Create();
-            new DirectoryInfo(Path.Combine(Properties.Settings.Default.ProjectLocation, "css")).Create();
+            new DirectoryInfo(Path.Combine(projectLocation, "js")).Create();
+            new DirectoryInfo(Path.Combine(projectLocation, "css")).Create();
 
             using (ZipArchive zip = new ZipArchive(new MemoryStream(PaperlessResources.images)))
             {
@@ -60,11 +85,11 @@ namespace Paperless.Model
                     }
                 }
             }
-            using (var js = File.CreateText(Path.Combine(Properties.Settings.Default.ProjectLocation, @"js\paperless.js")))
+            using (var js = File.CreateText(Path.Combine(projectLocation, @"js\paperless.js")))
             {
                 js.Write(PaperlessResources.paperless_js);
             }
-            using (var css = File.CreateText(Path.Combine(Properties.Settings.Default.ProjectLocation, @"css\paperless.css")))
+            using (var css = File.CreateText(Path.Combine(projectLocation, @"css\paperless.css")))
             {
                 css.Write(PaperlessResources.paperless_css);
             }
@@ -100,15 +125,16 @@ namespace Paperless.Model
             if (Notebooks.Count() == 0)
             {
                 Notebooks.Add(new Notebook { Name = "Archive" });
+                Notebooks.Add(new Notebook { Name = "Deleted" });
                 SaveChanges();
             }
         }
         public override int SaveChanges()
         {
-            var objectStateEntries = ChangeTracker.Entries()
+            var updatedNotes = ChangeTracker.Entries()
                 .Where(e => e.Entity is Note && (e.State == EntityState.Modified || e.State == EntityState.Added)).ToList();
             var currentTime = DateTime.UtcNow;
-            foreach (var entry in objectStateEntries)
+            foreach (var entry in updatedNotes)
             {
                 var entityBase = entry.Entity as Note;
                 if (entityBase == null) continue;
@@ -119,7 +145,36 @@ namespace Paperless.Model
                 entityBase.UpdateTime = currentTime;
             }
 
+            var deletedAttachments = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Deleted).Select(e => e.Entity).ToList();
+            string attDir = Path.Combine(projectLocation, "attachments");
+            foreach (var del in deletedAttachments)
+            {
+                if (del is Attachment)
+                {
+                    (del as Attachment).Delete(attDir);
+                } else if (del is Note)
+                {
+                    foreach (var att in ((Note)del).Attachments)
+                    {
+                        att.Delete(attDir);
+                    }
+                }
+            }
+            var changed = ChangeTracker.Entries().Where(i => i.State != EntityState.Unchanged).ToList();
+
             return base.SaveChanges();
+        }
+
+        public void DeleteNote(Note note)
+        {
+            if (note.Notebook == Deleted)
+            {
+                Notes.Remove(note);
+            } else
+            {
+                note.Notebook = Deleted;
+            }
         }
     }
 
@@ -199,6 +254,11 @@ namespace Paperless.Model
             MD5 md5 = MD5.Create();
             byte[] hash = md5.ComputeHash(data);
             Hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
+        }
+
+        public void Delete(string attachmentDir)
+        {
+            File.Delete(Path.Combine(attachmentDir, UniqueFileName));
         }
     }
 

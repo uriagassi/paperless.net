@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Notebooks", 1, 1);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Tags");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Notebooks", 1, 1);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Tags");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PaperlessMain));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tagView = new System.Windows.Forms.TreeView();
@@ -78,6 +78,9 @@
             this.evernoteImportDialog = new System.Windows.Forms.OpenFileDialog();
             this.projectFolderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tags = new System.Windows.Forms.BindingSource(this.components);
+            this.emptyDeletedNotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.restoireAllDeletedNotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -129,17 +132,17 @@
             this.tagView.LabelEdit = true;
             this.tagView.Location = new System.Drawing.Point(0, 0);
             this.tagView.Name = "tagView";
-            treeNode3.ImageIndex = 1;
-            treeNode3.Name = "Notebooks";
-            treeNode3.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode3.SelectedImageIndex = 1;
-            treeNode3.Text = "Notebooks";
-            treeNode4.Name = "Tags";
-            treeNode4.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode4.Text = "Tags";
+            treeNode1.ImageIndex = 1;
+            treeNode1.Name = "Notebooks";
+            treeNode1.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode1.SelectedImageIndex = 1;
+            treeNode1.Text = "Notebooks";
+            treeNode2.Name = "Tags";
+            treeNode2.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode2.Text = "Tags";
             this.tagView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode3,
-            treeNode4});
+            treeNode1,
+            treeNode2});
             this.tagView.SelectedImageIndex = 0;
             this.tagView.ShowLines = false;
             this.tagView.Size = new System.Drawing.Size(227, 485);
@@ -195,6 +198,7 @@
             this.noteListView.TabIndex = 0;
             this.noteListView.ValueMember = "Title";
             this.noteListView.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.noteListView_DrawItem);
+            this.noteListView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.noteListView_KeyUp);
             this.noteListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.noteListView_MouseDoubleClick);
             this.noteListView.Resize += new System.EventHandler(this.noteListView_Resize);
             // 
@@ -240,6 +244,9 @@
             this.printToolStripMenuItem,
             this.printPreviewToolStripMenuItem,
             this.toolStripSeparator2,
+            this.emptyDeletedNotesToolStripMenuItem,
+            this.restoireAllDeletedNotesToolStripMenuItem,
+            this.toolStripSeparator6,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -316,6 +323,7 @@
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -524,6 +532,25 @@
             this.tags.DataSource = typeof(Paperless.Model.Tag);
             this.tags.DataSourceChanged += new System.EventHandler(this.tags_DataSourceChanged);
             // 
+            // emptyDeletedNotesToolStripMenuItem
+            // 
+            this.emptyDeletedNotesToolStripMenuItem.Name = "emptyDeletedNotesToolStripMenuItem";
+            this.emptyDeletedNotesToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.emptyDeletedNotesToolStripMenuItem.Text = "Empty &Deleted Notes";
+            this.emptyDeletedNotesToolStripMenuItem.Click += new System.EventHandler(this.emptyDeletedNotesToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(187, 6);
+            // 
+            // restoireAllDeletedNotesToolStripMenuItem
+            // 
+            this.restoireAllDeletedNotesToolStripMenuItem.Name = "restoireAllDeletedNotesToolStripMenuItem";
+            this.restoireAllDeletedNotesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.restoireAllDeletedNotesToolStripMenuItem.Text = "&Restore all Deleted Notes";
+            this.restoireAllDeletedNotesToolStripMenuItem.Click += new System.EventHandler(this.restoireAllDeletedNotesToolStripMenuItem_Click);
+            // 
             // PaperlessMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -609,6 +636,9 @@
         private System.Windows.Forms.BindingSource noteBindingSource;
         private NoteDetails noteDetails1;
         private System.Windows.Forms.ToolStripMenuItem updateProjectTemplateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem emptyDeletedNotesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem restoireAllDeletedNotesToolStripMenuItem;
     }
 }
 
