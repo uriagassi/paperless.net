@@ -145,7 +145,7 @@ namespace Paperless.Import
                             break;
                         case "tag":
                             string tagNode = element.ReadElementContentAsString();
-                            AddTag(newNote, tagNode);
+                            context.AddTag(newNote, tagNode);
                             break;
                         case "resource":
                             Attachment att = new Attachment();
@@ -212,17 +212,6 @@ namespace Paperless.Import
             Report(new ImportProgress { Text = "Finishing up..." });
         }
 
-        private void AddTag(Note note, string tagName)
-        {
-            Tag tag = context.Tags.Local.FirstOrDefault(t => t.Name == tagName);
-            if (tag == null)
-            {
-                tag = new Tag { Name = tagName };
-                context.Tags.Add(tag);
-            }
-            context.NoteTags.Add(new NoteTag { Note = note, Tag = tag });
-        }
-
         private static Regex attachmentRegex = new Regex("<en-media.*?hash=\"([^\"]+)\".*?/>", RegexOptions.Compiled);
 
         private string fixAttachments(Note note)
@@ -233,7 +222,7 @@ namespace Paperless.Import
                 Attachment att = note.Attachments.Find(x => x.Hash == match.Groups[1].Value.ToLower());
                 if (att == null)
                 {
-                    AddTag(note, ".__Corrupt__");
+                    context.AddTag(note, ".__Corrupt__");
                     return match.Groups[0].Value;
                 }
                 return att.GetHTMLTag();

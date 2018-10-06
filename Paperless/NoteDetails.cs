@@ -195,15 +195,21 @@ namespace Paperless
             loadNoteContents();
         }
 
-       /* private void tags_DrawItem(object sender, DrawItemEventArgs e)
+        private void noteTagsList1_AddTag(object sender, Controls.NoteTagsList.TextEventArgs e)
         {
-            if (e.Index < 0) return;
-            var tag = (Tag)tags.Items[e.Index];
-            var textSize = TextRenderer.MeasureText(e.Graphics, tag.Name, Font);
-            var rect = new Rectangle(e.Bounds.Location, new Size(textSize.Width + 15, e.Bounds.Height));
-            e.Graphics.FillRectangle(Brushes.LightBlue, rect);
-            TextRenderer.DrawText(e.Graphics, tag.Name, Font, rect, ForeColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
-        }*/
+            Context.AddTag(Note, e.Text);
+            Context.SaveChangesAsync();
+        }
+
+        /* private void tags_DrawItem(object sender, DrawItemEventArgs e)
+         {
+             if (e.Index < 0) return;
+             var tag = (Tag)tags.Items[e.Index];
+             var textSize = TextRenderer.MeasureText(e.Graphics, tag.Name, Font);
+             var rect = new Rectangle(e.Bounds.Location, new Size(textSize.Width + 15, e.Bounds.Height));
+             e.Graphics.FillRectangle(Brushes.LightBlue, rect);
+             TextRenderer.DrawText(e.Graphics, tag.Name, Font, rect, ForeColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+         }*/
     }
 
 }

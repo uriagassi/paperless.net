@@ -192,6 +192,19 @@ namespace Paperless.Model
                 note.Notebook = Deleted;
             }
         }
+
+        public void AddTag(Note note, string tagName)
+        {
+            Tag tag = Tags.Local.FirstOrDefault(t => t.Name == tagName);
+            if (tag == null)
+            {
+                tag = new Tag { Name = tagName };
+                Tags.Add(tag);
+            }
+            var nt = new NoteTag { Note = note, Tag = tag };
+            //NoteTags.Add(nt);
+            note.NoteTags.Add(nt);
+        }
     }
 
     public class Notebook

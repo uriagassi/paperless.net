@@ -164,13 +164,13 @@ namespace Paperless
         {
             try { 
             context = new Model.NotesContext(Properties.Settings.Default.ProjectLocation);
-                noteDetails1.Context = context;
             //context.CreateIfNeeded();
             tags.DataSource = context.Tags.Local.ToBindingList();
                 tagView.Nodes["Tags"].Expand();
                 context.Tags.Local.CollectionChanged += tags_DataSourceChanged();
                 UpdateTagList();
                 CreateNotebookList();
+                noteDetails1.Context = context;
                 tagView.Nodes[0].EnsureVisible();
             }
             catch (Exception e)

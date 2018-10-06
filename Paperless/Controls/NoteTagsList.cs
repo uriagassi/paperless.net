@@ -45,7 +45,44 @@ namespace Paperless.Controls
             }
         }
 
-        public NotesContext NotesContext { get; internal set; }
+        public NotesContext NotesContext
+        {
+            get => _notesContext;
+            internal set
+            {
+                _notesContext = value;
+                if (_notesContext != null)
+                {
+                    newTagCombo.AutoCompleteCustomSource.Clear();
+                   // newTagCombo.Items.Clear();
+                        newTagCombo.AutoCompleteCustomSource.AddRange((from t in _notesContext.Tags.Local
+                                                                      select t.Name).ToArray());
+//newTagCombo.Items.Add(tag.Name);
+                    _notesContext.Tags.Local.CollectionChanged += AvailableTagsChanged;
+                }
+            }
+        }
+
+        private void AvailableTagsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (var tag in e.NewItems)
+                {
+                    newTagCombo.AutoCompleteCustomSource.Add(((Tag)tag).Name);
+  //                  newTagCombo.Items.Add(((Tag)tag).Name);
+                }
+            } else
+            {
+                newTagCombo.AutoCompleteCustomSource.Clear();
+                //newTagCombo.Items.Clear();
+                foreach (var tag in _notesContext.Tags.Local)
+                {
+                    newTagCombo.AutoCompleteCustomSource.Add(tag.Name);
+                   // newTagCombo.Items.Add(tag.Name);
+                }
+            }
+        }
 
         private void noteTags_DataSourceChanged(object sender, EventArgs e)
         {
@@ -61,13 +98,15 @@ namespace Paperless.Controls
             //var en = noteTags.GetEnumerator();
             //while (en.MoveNext())
             //{
-              //  if ((flowLayoutPanel1.Controls[i] as NoteTagView)?.NoteTag != en.Current) return true;
-               // i++;
-           // }
+            //  if ((flowLayoutPanel1.Controls[i] as NoteTagView)?.NoteTag != en.Current) return true;
+            // i++;
+            // }
             return true;
         }
 
         private Stack<NoteTagView> controlCache = new Stack<NoteTagView>();
+        private NotesContext _notesContext;
+
         private void DrawList()
         {
             SuspendLayout();
@@ -89,7 +128,8 @@ namespace Paperless.Controls
                         {
                             item = new NoteTagView { NotesContext = NotesContext };
                             item.TagDeleted += Item_TagDeleted;
-                        } else
+                        }
+                        else
                         {
                             item = controlCache.Pop();
                         }
@@ -104,11 +144,13 @@ namespace Paperless.Controls
                     controlCache.Push((NoteTagView)flowLayoutPanel1.Controls[i]);
                     flowLayoutPanel1.Controls.RemoveAt(i);
                 }
-                showMore.Visible = (flowLayoutPanel1.Controls[i - 1].Bounds.Y != 0) ;
-            } catch (Exception e)
+                CheckShowMore();
+            }
+            catch (Exception e)
             {
                 Console.Out.WriteLine(e);
-            } finally
+            }
+            finally
             {
                 ResumeLayout();
             }
@@ -134,10 +176,67 @@ namespace Paperless.Controls
 
         private void flowLayoutPanel1_ClientSizeChanged(object sender, EventArgs e)
         {
+            CheckShowMore();
+        }
+
+        private void CheckShowMore()
+        {
             if (flowLayoutPanel1.Controls.Count > 0)
             {
-                showMore.Visible = (flowLayoutPanel1.Controls[flowLayoutPanel1.Controls.Count - 1].Bounds.Y != 0);
+                newTagCombo.Visible = flowLayoutPanel1.Controls[flowLayoutPanel1.Controls.Count - 1].Bounds.Y == 0;
+                showMore.Visible = (!newTagCombo.Visible || newTagCombo.Bounds.Y >= 10);
             }
+        }
+
+        private void newTagCombo_TextUpdate(object sender, EventArgs e)
+        {
+            try
+            {
+                if (newTagCombo.Bounds.Y < 10 && newTagCombo.Text != "Add tag..." && newTagCombo.Text != "")
+                {
+                    var en = noteTags.GetEnumerator();
+                    while (en.MoveNext())
+                    {
+                        if ((en.Current as NoteTag)?.Tag?.Name == newTagCombo.Text) return;
+                    }
+                    AddTag?.Invoke(this, new TextEventArgs { Text = newTagCombo.Text });
+                }
+            }
+            finally
+            {
+                newTagCombo.Text = "Add tag...";
+                newTagCombo.SelectAll();
+            }
+        }
+        public class TextEventArgs : EventArgs { public string Text { get; set; } }
+        [Category("Data Change")]
+        public event EventHandler<TextEventArgs> AddTag;
+
+        private void newTagCombo_Enter(object sender, EventArgs e)
+        {
+            newTagCombo.Text = "";
+            newTagCombo.BackColor = SystemColors.Window;
+        }
+
+        private void newTagCombo_Leave(object sender, EventArgs e)
+        {
+            // newTagCombo.Text = "Add tag...";
+            newTagCombo.BackColor = SystemColors.Control;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Enter || keyData == Keys.Tab)
+            {
+                TextBoxBase box = this.ActiveControl as TextBoxBase;
+                if (box == null || !box.Multiline)
+                {
+                    // Not a dialog, not a multi-line textbox; we can use Enter for tabbing
+                    this.SelectNextControl(this.ActiveControl, true, true, true, true);
+                    return true;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }

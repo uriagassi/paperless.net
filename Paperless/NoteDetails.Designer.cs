@@ -133,6 +133,7 @@
             this.noteTagsList1.Name = "noteTagsList1";
             this.noteTagsList1.Size = new System.Drawing.Size(327, 22);
             this.noteTagsList1.TabIndex = 4;
+            this.noteTagsList1.AddTag += new System.EventHandler<Paperless.Controls.NoteTagsList.TextEventArgs>(this.noteTagsList1_AddTag);
             // 
             // noteTagsBindingSource1
             // 
