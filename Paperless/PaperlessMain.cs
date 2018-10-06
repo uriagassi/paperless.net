@@ -226,7 +226,7 @@ namespace Paperless
 
         private void tagView_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            DoDragDrop(e.Item, DragDropEffects.Move);
+            DoDragDrop(e.Item, DragDropEffects.Move | DragDropEffects.Copy);
         }
 
         private void tagView_DragEnter(object sender, DragEventArgs e)
@@ -508,6 +508,35 @@ namespace Paperless
             context.SaveChangesAsync();
             UpdateNotebookList();
             UpdateTagList();
+        }
+
+        private void noteDetails1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+            {
+                var node = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+                if (node.Tag is Tag)
+                {
+                    e.Effect = DragDropEffects.Copy;
+                }
+            }
+        }
+
+        private void noteDetails1_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+            {
+                var node = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+                var tag = node.Tag as Tag;
+                if (tag != null)
+                {
+                    foreach (var noteTag in noteDetails1.Note.NoteTags)
+                    {
+                        if (noteTag.Tag == tag) return;
+                    }
+                    noteDetails1.Note.NoteTags.Add(new NoteTag { Note = noteDetails1.Note, Tag = tag });
+                }
+            }
         }
     }
 }

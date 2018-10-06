@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Notebooks", 1, 1);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Tags");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Notebooks", 1, 1);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Tags");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PaperlessMain));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tagView = new System.Windows.Forms.TreeView();
@@ -50,6 +50,9 @@
             this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.emptyDeletedNotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoireAllDeletedNotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,9 +81,6 @@
             this.evernoteImportDialog = new System.Windows.Forms.OpenFileDialog();
             this.projectFolderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tags = new System.Windows.Forms.BindingSource(this.components);
-            this.emptyDeletedNotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.restoireAllDeletedNotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -132,17 +132,17 @@
             this.tagView.LabelEdit = true;
             this.tagView.Location = new System.Drawing.Point(0, 0);
             this.tagView.Name = "tagView";
-            treeNode1.ImageIndex = 1;
-            treeNode1.Name = "Notebooks";
-            treeNode1.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode1.SelectedImageIndex = 1;
-            treeNode1.Text = "Notebooks";
-            treeNode2.Name = "Tags";
-            treeNode2.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode2.Text = "Tags";
+            treeNode3.ImageIndex = 1;
+            treeNode3.Name = "Notebooks";
+            treeNode3.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode3.SelectedImageIndex = 1;
+            treeNode3.Text = "Notebooks";
+            treeNode4.Name = "Tags";
+            treeNode4.NodeFont = new System.Drawing.Font("LuzSans-Book", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode4.Text = "Tags";
             this.tagView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2});
+            treeNode3,
+            treeNode4});
             this.tagView.SelectedImageIndex = 0;
             this.tagView.ShowLines = false;
             this.tagView.Size = new System.Drawing.Size(227, 485);
@@ -217,6 +217,8 @@
             this.noteDetails1.Note = null;
             this.noteDetails1.Size = new System.Drawing.Size(575, 485);
             this.noteDetails1.TabIndex = 0;
+            this.noteDetails1.DragDrop += new System.Windows.Forms.DragEventHandler(this.noteDetails1_DragDrop);
+            this.noteDetails1.DragEnter += new System.Windows.Forms.DragEventHandler(this.noteDetails1_DragEnter);
             // 
             // menuStrip1
             // 
@@ -258,7 +260,7 @@
             this.newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.newToolStripMenuItem.Text = "&New";
             // 
             // openToolStripMenuItem
@@ -267,13 +269,13 @@
             this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.openToolStripMenuItem.Text = "&Open";
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(187, 6);
+            this.toolStripSeparator.Size = new System.Drawing.Size(202, 6);
             // 
             // saveToolStripMenuItem
             // 
@@ -281,20 +283,20 @@
             this.saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.saveToolStripMenuItem.Text = "Reload Project";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.saveAsToolStripMenuItem.Text = "Save &As";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(187, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(202, 6);
             // 
             // printToolStripMenuItem
             // 
@@ -302,7 +304,7 @@
             this.printToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.printToolStripMenuItem.Name = "printToolStripMenuItem";
             this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.printToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.printToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.printToolStripMenuItem.Text = "&Print";
             // 
             // printPreviewToolStripMenuItem
@@ -310,18 +312,37 @@
             this.printPreviewToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printPreviewToolStripMenuItem.Image")));
             this.printPreviewToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
-            this.printPreviewToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.printPreviewToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.printPreviewToolStripMenuItem.Text = "Print Pre&view";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(187, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(202, 6);
+            // 
+            // emptyDeletedNotesToolStripMenuItem
+            // 
+            this.emptyDeletedNotesToolStripMenuItem.Name = "emptyDeletedNotesToolStripMenuItem";
+            this.emptyDeletedNotesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.emptyDeletedNotesToolStripMenuItem.Text = "Empty &Deleted Notes";
+            this.emptyDeletedNotesToolStripMenuItem.Click += new System.EventHandler(this.emptyDeletedNotesToolStripMenuItem_Click);
+            // 
+            // restoireAllDeletedNotesToolStripMenuItem
+            // 
+            this.restoireAllDeletedNotesToolStripMenuItem.Name = "restoireAllDeletedNotesToolStripMenuItem";
+            this.restoireAllDeletedNotesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.restoireAllDeletedNotesToolStripMenuItem.Text = "&Restore all Deleted Notes";
+            this.restoireAllDeletedNotesToolStripMenuItem.Click += new System.EventHandler(this.restoireAllDeletedNotesToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(202, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -531,25 +552,6 @@
             // 
             this.tags.DataSource = typeof(Paperless.Model.Tag);
             this.tags.DataSourceChanged += new System.EventHandler(this.tags_DataSourceChanged);
-            // 
-            // emptyDeletedNotesToolStripMenuItem
-            // 
-            this.emptyDeletedNotesToolStripMenuItem.Name = "emptyDeletedNotesToolStripMenuItem";
-            this.emptyDeletedNotesToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.emptyDeletedNotesToolStripMenuItem.Text = "Empty &Deleted Notes";
-            this.emptyDeletedNotesToolStripMenuItem.Click += new System.EventHandler(this.emptyDeletedNotesToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(187, 6);
-            // 
-            // restoireAllDeletedNotesToolStripMenuItem
-            // 
-            this.restoireAllDeletedNotesToolStripMenuItem.Name = "restoireAllDeletedNotesToolStripMenuItem";
-            this.restoireAllDeletedNotesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.restoireAllDeletedNotesToolStripMenuItem.Text = "&Restore all Deleted Notes";
-            this.restoireAllDeletedNotesToolStripMenuItem.Click += new System.EventHandler(this.restoireAllDeletedNotesToolStripMenuItem_Click);
             // 
             // PaperlessMain
             // 

@@ -160,6 +160,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\NoteTagsList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\NoteTagsList.Designer.cs">
+      <DependentUpon>NoteTagsList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NoteTagView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\NoteTagView.Designer.cs">
+      <DependentUpon>NoteTagView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Import\FromEvernote.cs" />
     <Compile Include="Import\ImportProgress.cs" />
     <Compile Include="Model\Model.cs" />
@@ -197,6 +209,12 @@
     <Compile Include="Utils\ExtensionHelper.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="WebBrowserHelper.cs" />
+    <EmbeddedResource Include="Controls\NoteTagsList.resx">
+      <DependentUpon>NoteTagsList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\NoteTagView.resx">
+      <DependentUpon>NoteTagView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NoteDetails.resx">
       <DependentUpon>NoteDetails.cs</DependentUpon>
     </EmbeddedResource>
@@ -226,6 +244,7 @@
     <None Include="Properties\DataSources\Paperless.Model.Note.datasource" />
     <None Include="Properties\DataSources\Paperless.Model.Notebook.datasource" />
     <None Include="Properties\DataSources\Paperless.Model.NotesContext.datasource" />
+    <None Include="Properties\DataSources\Paperless.Model.NoteTag.datasource" />
     <None Include="Properties\DataSources\Paperless.Model.Tag.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

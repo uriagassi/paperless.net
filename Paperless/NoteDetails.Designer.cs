@@ -33,15 +33,17 @@
             this.noteBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.notebook = new System.Windows.Forms.ComboBox();
             this.notebookBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.tags = new System.Windows.Forms.ListBox();
             this.noteTagsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.noteContents = new System.Windows.Forms.WebBrowser();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.noteTagsList1 = new Paperless.Controls.NoteTagsList();
+            this.noteTagsBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.noteBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.notebookBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.noteTagsBindingSource)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.noteTagsBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // title
@@ -76,24 +78,6 @@
             // 
             this.notebookBindingSource.DataSource = typeof(Paperless.Model.Notebook);
             // 
-            // tags
-            // 
-            this.tags.BackColor = System.Drawing.SystemColors.Control;
-            this.tags.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.tags.DataSource = this.noteTagsBindingSource;
-            this.tags.DisplayMember = "Tag.Name";
-            this.tags.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tags.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.tags.FormattingEnabled = true;
-            this.tags.ItemHeight = 20;
-            this.tags.Location = new System.Drawing.Point(153, 30);
-            this.tags.MultiColumn = true;
-            this.tags.Name = "tags";
-            this.tags.Size = new System.Drawing.Size(327, 22);
-            this.tags.TabIndex = 2;
-            this.tags.TabStop = false;
-            this.tags.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tags_DrawItem);
-            // 
             // noteTagsBindingSource
             // 
             this.noteTagsBindingSource.DataMember = "NoteTags";
@@ -126,10 +110,10 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tableLayoutPanel1.Controls.Add(this.tags, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.notebook, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.title, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.dateTimePicker1, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this.noteTagsList1, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -138,6 +122,22 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(633, 55);
             this.tableLayoutPanel1.TabIndex = 5;
+            // 
+            // noteTagsList1
+            // 
+            this.noteTagsList1.AllowDrop = true;
+            this.noteTagsList1.DataMember = "";
+            this.noteTagsList1.DataSource = this.noteTagsBindingSource1;
+            this.noteTagsList1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.noteTagsList1.Location = new System.Drawing.Point(153, 30);
+            this.noteTagsList1.Name = "noteTagsList1";
+            this.noteTagsList1.Size = new System.Drawing.Size(327, 22);
+            this.noteTagsList1.TabIndex = 4;
+            // 
+            // noteTagsBindingSource1
+            // 
+            this.noteTagsBindingSource1.DataMember = "NoteTags";
+            this.noteTagsBindingSource1.DataSource = this.noteBindingSource;
             // 
             // NoteDetails
             // 
@@ -152,6 +152,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.noteTagsBindingSource)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.noteTagsBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -159,12 +160,13 @@
         #endregion
         private System.Windows.Forms.TextBox title;
         private System.Windows.Forms.ComboBox notebook;
-        private System.Windows.Forms.ListBox tags;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.WebBrowser noteContents;
         private System.Windows.Forms.BindingSource noteBindingSource;
         private System.Windows.Forms.BindingSource noteTagsBindingSource;
         private System.Windows.Forms.BindingSource notebookBindingSource;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private Controls.NoteTagsList noteTagsList1;
+        private System.Windows.Forms.BindingSource noteTagsBindingSource1;
     }
 }

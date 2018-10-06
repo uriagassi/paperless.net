@@ -40,7 +40,7 @@ namespace Paperless
             {
                 if (noteBindingSource.DataSource != value && value != null)
                 {
-                    if (Note != null) Context.SaveChanges();
+                    if (Note != null) Context.SaveChangesAsync();
                     //try
                     //{
                         noteBindingSource.DataSource = value;
@@ -62,7 +62,63 @@ namespace Paperless
                 _context = value;
                 if (Context != null)
                     notebookBindingSource.DataSource = _context.Notebooks.Local.ToBindingList();
+                noteTagsList1.NotesContext = value;
             }
+        }
+
+        protected override void OnControlAdded(ControlEventArgs e)
+        {
+            WireControls(e.Control);
+            base.OnControlAdded(e);
+        }
+
+        public void WireControls(Control ctrl)
+        {
+            try
+            {
+                ctrl.AllowDrop = true;
+                ctrl.DragEnter += Control_DragEnter;
+                ctrl.DragDrop += Control_DragDrop;
+                foreach (Control child in ctrl.Controls)
+                {
+                    WireControls(child);
+                }
+                ctrl.ControlAdded += Ctrl_ControlAdded;
+                ctrl.ControlRemoved += Ctrl_ControlRemoved;
+            }
+            catch (NotSupportedException) { }
+        }
+
+        private void Ctrl_ControlAdded(object sender, ControlEventArgs e)
+        {
+            WireControls(e.Control);
+        }
+
+        private void Ctrl_ControlRemoved(object sender, ControlEventArgs e)
+        {
+            UnwireControls(e.Control);
+        }
+
+        public void UnwireControls(Control ctrl)
+        {
+            ctrl.DragEnter -= Control_DragEnter;
+            ctrl.DragDrop -= Control_DragDrop;
+            foreach (Control child in ctrl.Controls)
+            {
+                UnwireControls(child);
+            }
+            ctrl.ControlAdded -= Ctrl_ControlAdded;
+            ctrl.ControlRemoved -= Ctrl_ControlRemoved;
+        }
+
+        private void Control_DragDrop(object sender, DragEventArgs e)
+        {
+            OnDragDrop(e);
+        }
+
+        private void Control_DragEnter(object sender, DragEventArgs e)
+        {
+            OnDragEnter(e);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -139,7 +195,7 @@ namespace Paperless
             loadNoteContents();
         }
 
-        private void tags_DrawItem(object sender, DrawItemEventArgs e)
+       /* private void tags_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
             var tag = (Tag)tags.Items[e.Index];
@@ -147,7 +203,7 @@ namespace Paperless
             var rect = new Rectangle(e.Bounds.Location, new Size(textSize.Width + 15, e.Bounds.Height));
             e.Graphics.FillRectangle(Brushes.LightBlue, rect);
             TextRenderer.DrawText(e.Graphics, tag.Name, Font, rect, ForeColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
-        }
+        }*/
     }
 
 }

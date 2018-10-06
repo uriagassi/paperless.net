@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SQLite;
 using System.IO;
@@ -12,6 +15,19 @@ using Paperless.Utils;
 
 namespace Paperless.Model
 {
+    public class ObservableListSource<T> : ObservableCollection<T>, IListSource
+    where T : class
+    {
+        private IBindingList _bindingList;
+
+        bool IListSource.ContainsListCollection { get { return false; } }
+
+        IList IListSource.GetList()
+        {
+            return _bindingList ?? (_bindingList = this.ToBindingList());
+        }
+    }
+
     public class NotesContext : DbContext
     {
         public NotesContext(string projectLocation)
@@ -264,11 +280,13 @@ namespace Paperless.Model
 
     public class Note
     {
+        private readonly ObservableListSource<NoteTag> _noteTags =
+                    new ObservableListSource<NoteTag>();
         [Key]
         public int NodeId { get; set; }
         [Required]
         public Notebook Notebook { get; set; }
-        public List<NoteTag> NoteTags { get; set; }
+        public virtual ObservableListSource<NoteTag> NoteTags { get { return _noteTags;  } }
         public DateTime CreateTime { get; set; }
         public DateTime UpdateTime { get; set; }
         public string Title { get; set; }
